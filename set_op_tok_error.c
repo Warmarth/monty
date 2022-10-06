@@ -1,36 +1,46 @@
 #include "monty.h"
 
 /**
- * set_op_tok_error - Sets last element of op_toks to be an error code.
- * @error_code: Integer to store as a string in op_toks.
+ * calculator - performs basic operation
+ * Description:
+ * performs one of +, -, *, / and %
+ * with the top two elements
+ *
+ * @op: operation symbol
+ * @opname: operation name
+ * @line: line number
  */
-void set_op_tok_error(int error_code)
+void calculator(char op, char *opname,  int line)
 {
-	int toks_len = 0, j = 0;
-	char *exit_str = NULL;
-	char **new_toks = NULL;
+	int res, a, b;
 
-	toks_len = token_arr_len();
-	new_toks = malloc(sizeof(char *) * (toks_len + 2));
-	if (!op_toks)
+	if (!global.head || !global.head->next)
 	{
-		malloc_error();
+		dprintf(2, "L%u: can't %s, stack too short\n", line, opname);
+		global.quit = EXIT_FAILURE;
 		return;
 	}
-	while (j < toks_len)
+	a = global.head->n;
+	b = global.head->next->n;
+	switch (op)
 	{
-		new_toks[j] = op_toks[j];
-		j++;
+	case '+':
+		res = a + b;
+		break;
+	case '-':
+		res = b - a;
+		break;
+	case '*':
+		res = a * b;
+		break;
+	case '/':
+		res = b / a;
+		break;
+	case '%':
+		res = b % a;
+		break;
+	default:
+		break;
 	}
-	exit_str = get_int(error_code);
-	if (!exit_str)
-	{
-		free(new_toks);
-		malloc_error();
-		return;
-	}
-	new_toks[j++] = exit_str;
-	new_toks[j] = NULL;
-	free(op_toks);
-	op_toks = new_toks;
+	global.head->next->n = res, pop();
 }

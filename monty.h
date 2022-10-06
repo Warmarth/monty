@@ -1,6 +1,14 @@
 #ifndef MONTY_H
 #define MONTY_H
+#define _POSIX_C_SOURCE 200809L
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define STACK 0
+#define QUEUE 1
+#define DELIM " \t"
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -18,7 +26,6 @@ typedef struct stack_s
 	struct stack_s *next;
 } stack_t;
 
-
 /**
  * struct instruction_s - opcode and its function
  * @opcode: the opcode
@@ -33,57 +40,75 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+/**
+ * struct global_s - a global struct to hold info regarding the entire project
+ * @head: head of the stack
+ * @tail: tail of the stack
+ * @mode: mode of the data LIFO or FIFO
+ * @quit: variable for exit
+ * @arg: argument if any
+ */
+typedef struct global_s
+{
+	stack_t *head;
+	stack_t *tail;
+	int mode;
+	int quit;
+	char *arg;
+} global_t;
 
-#define STACK 0
-#define QUEUE 1
-#define DELIMS " \n\t\a\b"
-extern char **op_toks;
+/* ========== Globals =========== */
+extern global_t global;
 
-/* PRIMARY INTERPRETER FUNCTIONS */
-void free_stack(stack_t **stack);
-int init_stack(stack_t **stack);
-int check_mode(stack_t *stack);
-void free_tokens(void);
-unsigned int token_arr_len(void);
-int run_monty(FILE *script_fd);
-void set_op_tok_error(int error_code);
+/* =========== Handlers ============ */
+void push_handler(stack_t **, unsigned int);
+void pall_handler(stack_t **, unsigned int);
+void pop_handler(stack_t **, unsigned int);
+void swap_handler(stack_t **, unsigned int);
+void add_handler(stack_t **, unsigned int);
+void nop_handler(stack_t **, unsigned int);
+void sub_handler(stack_t **, unsigned int);
+void mul_handler(stack_t **, unsigned int);
+void div_handler(stack_t **, unsigned int);
+void mod_handler(stack_t **, unsigned int);
+void pint_handler(stack_t **, unsigned int);
+void rotl_handler(stack_t **, unsigned int);
+void pstr_handler(stack_t **, unsigned int);
+void pchr_handler(stack_t **, unsigned int);
+void rotr_handler(stack_t **, unsigned int);
+instruction_t _get_handler(const char *);
 
-/* OPCODE FUNCTIONS */
-void monty_push(stack_t **stack, unsigned int line_number);
-void monty_pall(stack_t **stack, unsigned int line_number);
-void monty_pint(stack_t **stack, unsigned int line_number);
-void monty_pop(stack_t **stack, unsigned int line_number);
-void monty_swap(stack_t **stack, unsigned int line_number);
-void monty_add(stack_t **stack, unsigned int line_number);
-void monty_nop(stack_t **stack, unsigned int line_number);
-void monty_sub(stack_t **stack, unsigned int line_number);
-void monty_div(stack_t **stack, unsigned int line_number);
-void monty_mul(stack_t **stack, unsigned int line_number);
-void monty_mod(stack_t **stack, unsigned int line_number);
-void monty_pchar(stack_t **stack, unsigned int line_number);
-void monty_pstr(stack_t **stack, unsigned int line_number);
-void monty_rotl(stack_t **stack, unsigned int line_number);
-void monty_rotr(stack_t **stack, unsigned int line_number);
-void monty_stack(stack_t **stack, unsigned int line_number);
-void monty_queue(stack_t **stack, unsigned int line_number);
+/* =========== Stack Ops =========== */
+void push(int);
+int pop(void);
+void print_stack(void);
 
-/* CUSTOM STANDARD LIBRARY FUNCTIONS */
-char **strtow(char *str, char *delims);
-char *get_int(int n);
+/* =========== Queue Ops =========== */
+int dequeue(void);
+void print_queue(void);
+void enqueue(int);
 
-/* ERROR MESSAGES & ERROR CODES */
-int usage_error(void);
-int malloc_error(void);
-int f_open_error(char *filename);
-int unknown_op_error(char *opcode, unsigned int line_number);
-int no_int_error(unsigned int line_number);
-int pop_error(unsigned int line_number);
-int pint_error(unsigned int line_number);
-int short_stack_error(unsigned int line_number, char *op);
-int div_error(unsigned int line_number);
-int pchar_error(unsigned int line_number, char *message);
+/* =========== custome Ops =========== */
+void swap(void);
+void calculator(char, char *,  int);
+
+/* ========== File handlers ========= */
+char *read_file(const char *);
+
+/* ========== Parse functions ========= */
+void parse_instructions(char **);
+int simple_opcodes(char **);
+
+/* ========== Helpers ========== */
+int is_delim(char, char *);
+char **strtow(char *, char *);
+int _isdigit(int);
+int is_number(char *);
+int arrlen(char **);
+void truncate_on_empty_line(char *);
+
+/* ========== Memory functions ========== */
+void clear_memory(void);
+void free_tokenized(char **);
 
 #endif /* MONTY_H */

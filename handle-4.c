@@ -1,80 +1,53 @@
 #include "monty.h"
 
-void monty_rotl(stack_t **stack, unsigned int line_number);
-void monty_rotr(stack_t **stack, unsigned int line_number);
-void monty_stack(stack_t **stack, unsigned int line_number);
-void monty_queue(stack_t **stack, unsigned int line_number);
-
 /**
- * monty_rotl - Rotates the top value of a stack_t linked list to the bottom.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
+ * pint_handler - handles pint operation
+ * @s: pointer to stack
+ * @l: line number
  */
-void monty_rotl(stack_t **stack, unsigned int line_number)
+void pint_handler(stack_t **s, unsigned int l)
 {
-	stack_t *top, *bottom;
+	(void)s;
 
-	if ((*stack)->next == NULL || (*stack)->next->next == NULL)
+	if (!global.head)
+	{
+		dprintf(2, "L%u: can't pint, stack empty\n", l);
+		global.quit = EXIT_FAILURE;
 		return;
-
-	top = (*stack)->next;
-	bottom = (*stack)->next;
-	while (bottom->next != NULL)
-		bottom = bottom->next;
-
-	top->next->prev = *stack;
-	(*stack)->next = top->next;
-	bottom->next = top;
-	top->next = NULL;
-	top->prev = bottom;
-
-	(void)line_number;
+	}
+	printf("%d\n", global.head->n);
 }
 
 /**
- * monty_rotr - Rotates the bottom value of a stack_t linked list to the top.
+ * temp_handler - handles mode change
+ * @s: pointer to stack
+ * @l: line number
+ */
+void temp_handler(stack_t **s, unsigned int l)
+{
+	(void)s;
+	(void)l;
+}
+
+/**
+ * pchr_handler - Prints the character in the top value
+ *               node of a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
  * @line_number: The current working line number of a Monty bytecodes file.
  */
-void monty_rotr(stack_t **stack, unsigned int line_number)
+void pchr_handler(stack_t **stack, unsigned int line_number)
 {
-	stack_t *top, *bottom;
-
-	if ((*stack)->next == NULL || (*stack)->next->next == NULL)
+	if ((*stack) == NULL)
+	{
+		fprintf(stderr, "L%u: can't pchar, stack empty\n", line_number);
+		global.quit = EXIT_FAILURE;
 		return;
-
-	top = (*stack)->next;
-	bottom = (*stack)->next;
-	while (bottom->next != NULL)
-		bottom = bottom->next;
-
-	bottom->prev->next = NULL;
-	(*stack)->next = bottom;
-	bottom->prev = *stack;
-	bottom->next = top;
-	top->prev = bottom;
-
-	(void)line_number;
-}
-
-/**
- * monty_stack - Converts a queue to a stack.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void monty_stack(stack_t **stack, unsigned int line_number)
-{
-	(*stack)->n = STACK;
-	(void)line_number;
-}
-
-/**
- * monty_queue - Converts a stack to a queue.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void monty_queue(stack_t **stack, unsigned int line_number)
-{
-	(*stack)->n = QUEUE;
-	(void)line_number;
+	}
+	if ((*stack)->n < 0 || (*stack)->n > 127)
+	{
+		fprintf(stderr, "L%u: can't pchar, value out of range\n", line_number);
+		global.quit = EXIT_FAILURE;
+		return;
+	}
+	printf("%c\n", (*stack)->n);
 }

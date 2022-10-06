@@ -1,59 +1,73 @@
 #include "monty.h"
 
-void monty_nop(stack_t **stack, unsigned int line_number);
-void monty_pchar(stack_t **stack, unsigned int line_number);
-void monty_pstr(stack_t **stack, unsigned int line_number);
-
 /**
- * monty_nop - Does absolutely nothing for the Monty opcode 'nop'.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
+ * add_handler - handles add operation
+ * @s: pointer to stack
+ * @l: line number
  */
-void monty_nop(stack_t **stack, unsigned int line_number)
+void add_handler(stack_t **s, unsigned int l)
 {
-	(void)stack;
-	(void)line_number;
+	(void)s;
+
+	calculator('+', "add", l);
 }
 
 /**
- * monty_pchar - Prints the character in the top value
- *               node of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
+ * sub_handler - handles sub operation
+ * @s: pointer to stack
+ * @l: line number
  */
-void monty_pchar(stack_t **stack, unsigned int line_number)
+void sub_handler(stack_t **s, unsigned int l)
 {
-	if ((*stack)->next == NULL)
-	{
-		set_op_tok_error(pchar_error(line_number, "stack empty"));
-		return;
-	}
-	if ((*stack)->next->n < 0 || (*stack)->next->n > 127)
-	{
-		set_op_tok_error(pchar_error(line_number,
-					     "value out of range"));
-		return;
-	}
+	(void)s;
 
-	printf("%c\n", (*stack)->next->n);
+	calculator('-', "sub", l);
 }
 
 /**
- * monty_pstr - Prints the string contained in a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
+ * mul_handler - handles mul operation
+ * @s: pointer to stack
+ * @l: line number
  */
-void monty_pstr(stack_t **stack, unsigned int line_number)
+void mul_handler(stack_t **s, unsigned int l)
 {
-	stack_t *tmp = (*stack)->next;
+	(void)s;
 
-	while (tmp && tmp->n != 0 && (tmp->n > 0 && tmp->n <= 127))
+	calculator('*', "mul", l);
+}
+
+/**
+ * div_handler - handles div operation
+ * @s: pointer to stack
+ * @l: line number
+ */
+void div_handler(stack_t **s, unsigned int l)
+{
+	(void)s;
+
+	if (global.head && !global.head->n)
 	{
-		printf("%c", tmp->n);
-		tmp = tmp->next;
+		dprintf(2, "L%u: division by zero\n", l);
+		global.quit = EXIT_FAILURE;
+		return;
 	}
+	calculator('/', "div", l);
+}
 
-	printf("\n");
+/**
+ * mod_handler - handles mod operation
+ * @s: pointer to stack
+ * @l: line number
+ */
+void mod_handler(stack_t **s, unsigned int l)
+{
+	(void)s;
 
-	(void)line_number;
+	if (global.head && !global.head->n)
+	{
+		dprintf(2, "L%u: division by zero\n", l);
+		global.quit = EXIT_FAILURE;
+		return;
+	}
+	calculator('%', "mod", l);
 }

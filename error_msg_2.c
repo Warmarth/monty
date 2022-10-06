@@ -1,71 +1,75 @@
 #include "monty.h"
 
-int short_stack_error(unsigned int line_number, char *op);
-int div_error(unsigned int line_number);
-int pop_error(unsigned int line_number);
-int div_error(unsigned int line_number);
-int pchar_error(unsigned int line_number, char *message);
-
 /**
- * pop_error - Prints pop error messages for empty stacks.
- * @line_number: Line number in script where error occured.
- *
- * Return: (EXIT_FAILURE) always.
+ * _isdigit - checks if a character is a digit
+ * @c: the character to check
+ * Return: 1 if is lower 0 otherwise;
  */
-int pop_error(unsigned int line_number)
+
+int _isdigit(int c)
 {
-	fprintf(stderr, "L%u: can't pop an empty stack\n", line_number);
-	return (EXIT_FAILURE);
+	if (c < '0' || c > '9')
+		return (0);
+	else
+		return (1);
 }
 
 /**
- * pint_error - Prints pint error messages for empty stacks.
- * @line_number: Line number in Monty bytecodes file where error occurred.
- *
- * Return: (EXIT_FAILURE) always.
+ * is_number - check if a string is number
+ * @str: string pointer
+ * Return: 0 if false 1 if true
  */
-int pint_error(unsigned int line_number)
+
+int is_number(char *str)
 {
-	fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
-	return (EXIT_FAILURE);
+	if (!str)
+		return (0);
+	if (*str == '-' || *str == '+')
+		str++;
+
+	while (*str)
+	{
+		if (!_isdigit(*str))
+			return (0);
+		str++;
+	}
+	return (1);
 }
 
 /**
- * short_stack_error - Prints monty math function error messages
- *                     for stacks/queues smaller than two nodes.
- * @line_number: Line number in Monty bytecodes file where error occurred.
- * @op: Operation where the error occurred.
- *
- * Return: (EXIT_FAILURE) always.
+ * _strcmp - compares src with dst
+ * @s1: pointer to the first string
+ * @s2: pointer to the second string
+ * Return: -ve if dst < src
+ * +ve if dst > src
+ * 0 if src == dst
  */
-int short_stack_error(unsigned int line_number, char *op)
+
+int _strcmp(char *s1, char *s2)
 {
-	fprintf(stderr, "L%u: can't %s, stack too short\n", line_number, op);
-	return (EXIT_FAILURE);
+	int x = 0, diff = 0;
+
+	while (diff == 0)
+	{
+		diff = s1[x] - s2[x];
+		if (s1[x] == '\0' || s2[x] == '\0')
+			break;
+		x++;
+	}
+	return (diff);
 }
 
 /**
- * div_error - Prints division error messages for division by 0.
- * @line_number: Line number in Monty bytecodes file where error occurred.
- *
- * Return: (EXIT_FAILURE) always.
+ * arrlen - length of array
+ * @args: array
+ * Return: the length
  */
-int div_error(unsigned int line_number)
-{
-	fprintf(stderr, "L%u: division by zero\n", line_number);
-	return (EXIT_FAILURE);
-}
 
-/**
- * pchar_error - Prints pchar error messages for empty stacks
- *               empty stacks and non-character values.
- * @line_number: Line number in Monty bytecodes file where error occurred.
- * @message: The corresponding error message to print.
- *
- * Return: (EXIT_FAILURE) always.
- */
-int pchar_error(unsigned int line_number, char *message)
+int arrlen(char **args)
 {
-	fprintf(stderr, "L%u: can't pchar, %s\n", line_number, message);
-	return (EXIT_FAILURE);
+	int i = 0;
+
+	while (args[i])
+		i++;
+	return (i);
 }

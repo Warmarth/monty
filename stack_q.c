@@ -1,66 +1,60 @@
 #include "monty.h"
-#include <string.h>
-
-void free_stack(stack_t **stack);
-int init_stack(stack_t **stack);
-int check_mode(stack_t *stack);
 
 /**
- * free_stack - Frees a stack_t stack.
- * @stack: A pointer to the top (stack) or
- *         bottom (queue) of a stack_t.
+ * push - push an element into stack
+ * @n: data to push
  */
-void free_stack(stack_t **stack)
+void push(int n)
 {
-	stack_t *tmp = *stack;
+	stack_t *new = malloc(sizeof(stack_t));
 
-	while (*stack)
+	if (!new)
 	{
-		tmp = (*stack)->next;
-		free(*stack);
-		*stack = tmp;
+		/* handle overflow */
+		fprintf(stderr, "Error: malloc failed\n");
+		global.quit = EXIT_FAILURE;
+		return;
 	}
+	new->n = n;
+	new->next = global.head;
+	if (!global.head)
+		global.tail = new;
+	else
+		global.head->prev = new;
+	global.head = new;
 }
 
 /**
- * init_stack - Initializes a stack_t stack with beginning
- *              stack and ending queue nodes.
- * @stack: A pointer to an unitialized stack_t stack.
- *
- * Return: If an error occurs - EXIT_FAILURE.
- *         Otherwise - EXIT_SUCCESS.
+ * pop - pops an element from the stack
+ * Return: the value removed
  */
-int init_stack(stack_t **stack)
+
+int pop(void)
 {
-	stack_t *s;
+	int res;
+	stack_t *temp = global.head;
 
-	s = malloc(sizeof(stack_t));
-	if (s == NULL)
-		return (malloc_error());
-
-	s->n = STACK;
-	s->prev = NULL;
-	s->next = NULL;
-
-	*stack = s;
-
-	return (EXIT_SUCCESS);
+	res = global.head->n;
+	if (global.head != global.tail)
+		global.head->next->prev = 0;
+	else
+		global.tail = 0;
+	global.head = global.head->next;
+	free(temp);
+	return (res);
 }
 
 /**
- * check_mode - Checks if a stack_t linked list is in stack or queue mode.
- * @stack: A pointer to the top (stack) or bottom (queue)
- *         of a stack_t linked list.
- *
- * Return: If the stack_t is in stack mode - STACK (0).
- *         If the stack_t is in queue mode - QUEUE (1).
- *         Otherwise - 2.
+ * print_stack - prints a stack in LIFO
  */
-int check_mode(stack_t *stack)
+
+void print_stack(void)
 {
-	if (stack->n == STACK)
-		return (STACK);
-	else if (stack->n == QUEUE)
-		return (QUEUE);
-	return (2);
+	stack_t *temp = global.head;
+
+	while (temp)
+	{
+		printf("%d\n", temp->n);
+		temp = temp->next;
+	}
 }
