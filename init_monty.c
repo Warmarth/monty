@@ -108,7 +108,7 @@ void (*get_op_func(char *opcode))(stack_t**, unsigned int)
  *
  * Return: EXIT_SUCCESS on success, respective error code on failure.
  */
-int run_monty(FILE *script_fd)
+int init_monty(FILE *script_fd)
 {
 	stack_t *stack = NULL;
 	char *line = NULL;
@@ -116,10 +116,11 @@ int run_monty(FILE *script_fd)
 	unsigned int line_number = 0, prev_tok_len = 0;
 	void (*op_func)(stack_t**, unsigned int);
 
+
 	if (init_stack(&stack) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 
-	while (getline(&line, &len, script_fd) != -1)
+	while (get_int)
 	{
 		line_number++;
 		op_toks = strtow(line, DELIMS);

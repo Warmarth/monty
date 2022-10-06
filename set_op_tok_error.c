@@ -6,7 +6,7 @@
  */
 void set_op_tok_error(int error_code)
 {
-	int toks_len = 0, i = 0;
+	int toks_len = 0, j = 0;
 	char *exit_str = NULL;
 	char **new_toks = NULL;
 
@@ -17,10 +17,10 @@ void set_op_tok_error(int error_code)
 		malloc_error();
 		return;
 	}
-	while (i < toks_len)
+	while (j < toks_len)
 	{
-		new_toks[i] = op_toks[i];
-		i++;
+		new_toks[j] = op_toks[j];
+		j++;
 	}
 	exit_str = get_int(error_code);
 	if (!exit_str)
@@ -29,8 +29,8 @@ void set_op_tok_error(int error_code)
 		malloc_error();
 		return;
 	}
-	new_toks[i++] = exit_str;
-	new_toks[i] = NULL;
+	new_toks[j++] = exit_str;
+	new_toks[j] = NULL;
 	free(op_toks);
 	op_toks = new_toks;
 }
