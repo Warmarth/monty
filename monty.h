@@ -40,6 +40,7 @@ typedef struct instruction_s
 #define STACK 0
 #define QUEUE 1
 #define DELIMS " \n\t\a\b"
+extern char **op_toks;
 
 /* PRIMARY INTERPRETER FUNCTIONS */
 void free_stack(stack_t **stack);
